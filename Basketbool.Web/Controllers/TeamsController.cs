@@ -1,8 +1,10 @@
 ﻿using Basketbool.Web.Data;
 using Basketbool.Web.Data.Entities;
+using Basketbool.Web.Interfaces;
 using Basketbool.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace Basketbool.Web.Controllers
@@ -10,10 +12,16 @@ namespace Basketbool.Web.Controllers
     public class TeamsController : Controller
     {
         private readonly DataContext _context;
+        private readonly IConverterHelper _converterHelper;
+        private readonly IBlobHelper _blobHelper;
 
-        public TeamsController(DataContext context)
+        public TeamsController(DataContext context,
+            IConverterHelper converterHelper,
+            IBlobHelper blobHelper)
         {
             _context = context;
+            _converterHelper = converterHelper;
+            _blobHelper = blobHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -26,39 +34,45 @@ namespace Basketbool.Web.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(TeamViewModel teamViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        string path = string.Empty;
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(TeamViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TeamEntity team = await _converterHelper.ToProductAsync(model, true);
 
-        //        if (teamViewModel.LogoFile != null)
-        //        {
-        //            path = await _imageHelper.UploadImageAsync(teamViewModel.LogoFile, "Teams");
-        //        }
-        //        TeamEntity teamEntity = _converterHelper.ToTeamEntity(teamViewModel, path, true);
-        //        _context.Add(teamEntity);
-        //        try
-        //        {
-        //            await _context.SaveChangesAsync();
-        //            return RedirectToAction(nameof(Index));
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            if (ex.InnerException.Message.Contains("duplicate"))
-        //            {
-        //                ModelState.AddModelError(string.Empty, $"Already exist the team: {teamEntity.Name}.");
-        //            }
-        //            else
-        //            {
-        //                ModelState.AddModelError(string.Empty, ex.InnerException.Message);
-        //            }
+                    if (model.LogoFile != null)
+                    {
+                        Guid imageId = await _blobHelper.UploadBlobAsync(model.LogoFile, "teams");
+                        team.LogoId = imageId;
+                    }
 
-        //        }
-        //    }
-        //    return View(teamViewModel);
-        //}
+                    _context.Add(team);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException dbUpdateException)
+                {
+                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                    {
+                        ModelState.AddModelError(string.Empty, "There are a record with the same name.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                }
+            }
+
+            //model.Categories = _combosHelper.GetComboCategories();
+            return View(model);
+        }
     }
 }

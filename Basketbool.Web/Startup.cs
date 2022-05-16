@@ -1,5 +1,7 @@
 using Basketbool.Web.Data;
 using Basketbool.Web.Data.Entities;
+using Basketbool.Web.Helpers;
+using Basketbool.Web.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -65,7 +67,12 @@ namespace Basketbool.Web
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
                         };
                     });
-
+            //services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IBlobHelper, BlobHelper>();
+            //services.AddScoped<ICombosHelper, CombosHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
+            //services.AddTransient<SeedDb>();
+            //services.AddScoped<IUserHelper, UserHelper>();
             services.AddControllersWithViews();
         }
 
