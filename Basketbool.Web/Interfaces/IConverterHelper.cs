@@ -1,5 +1,6 @@
 ﻿using Basketbool.Web.Data.Entities;
 using Basketbool.Web.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Basketbool.Web.Interfaces
@@ -10,9 +11,11 @@ namespace Basketbool.Web.Interfaces
 
         //CategoryViewModel ToCategoryViewModel(Category category);
 
-        Task<TeamEntity> ToProductAsync(TeamViewModel model, bool isNew);
+        Task<TeamEntity> ToTeamAsync(TeamViewModel model, bool isNew);
 
-        // ProductViewModel ToProductViewModel(Product product);
+        TeamViewModel ToTeamViewModel(TeamEntity entity);
+
+        TeamEntity ToTeamEntity(TeamViewModel model, Guid id, bool isNew);
 
     }
 

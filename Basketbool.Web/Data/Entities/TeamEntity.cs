@@ -19,7 +19,7 @@ namespace Basketbool.Web.Data.Entities
         [Display(Name = "Image")]
         public string LogoFullPath => LogoId == Guid.Empty
         ? $"https://localhost:44390/images/noimage.png"
-        : $"https://Basketbool.Web.blob.core.windows.net/products/{LogoId}";
+        : $"https://Basketbool.Web.blob.core.windows.net/teams/{LogoId}";
 
 
         public ICollection<UserEntity> Users { get; set; }

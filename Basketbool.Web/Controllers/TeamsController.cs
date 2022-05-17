@@ -42,7 +42,7 @@ namespace Basketbool.Web.Controllers
             {
                 try
                 {
-                    TeamEntity team = await _converterHelper.ToProductAsync(model, true);
+                    TeamEntity team = await _converterHelper.ToTeamAsync(model, true);
 
                     if (model.LogoFile != null)
                     {
@@ -73,6 +73,103 @@ namespace Basketbool.Web.Controllers
 
             //model.Categories = _combosHelper.GetComboCategories();
             return View(model);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TeamEntity teamEntity = await _context.Teams
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (teamEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View(teamEntity);
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TeamEntity teamEntity = await _context.Teams.FindAsync(id);
+            if (teamEntity == null)
+            {
+                return NotFound();
+            }
+
+            TeamViewModel teamViewModel = _converterHelper.ToTeamViewModel(teamEntity);
+            return View(teamViewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, TeamViewModel teamViewModel)
+        {
+            if (id != teamViewModel.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                Guid imageId = teamViewModel.LogoId;
+
+                if (teamViewModel.LogoFile != null)
+                {
+                    imageId = await _blobHelper.UploadBlobAsync(teamViewModel.LogoFile, "Teams");
+                }
+
+                TeamEntity teamEntity = _converterHelper.ToTeamEntity(teamViewModel, imageId, false);
+                _context.Update(teamEntity);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException.Message.Contains("duplicate"))
+                    {
+                        ModelState.AddModelError(string.Empty, $"Already exist the team: {teamEntity.Name}.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                    }
+                }
+
+            }
+
+            return View(teamViewModel);
+        }
+
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            TeamEntity teamEntity = await _context.Teams
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (teamEntity == null)
+            {
+                return NotFound();
+            }
+
+            _context.Teams.Remove(teamEntity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

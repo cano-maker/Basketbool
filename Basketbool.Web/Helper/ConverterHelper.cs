@@ -2,6 +2,7 @@
 using Basketbool.Web.Data.Entities;
 using Basketbool.Web.Interfaces;
 using Basketbool.Web.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Basketbool.Web.Helpers
@@ -39,37 +40,35 @@ namespace Basketbool.Web.Helpers
         //    };
         //}
 
-        public async Task<TeamEntity> ToProductAsync(TeamViewModel model, bool isNew)
+        public async Task<TeamEntity> ToTeamAsync(TeamViewModel model, bool isNew)
         {
             return new TeamEntity
             {
-                //Category = await _context.Categories.FindAsync(model.CategoryId),
-                //Description = model.Description,
                 Id = isNew ? 0 : model.Id,
-                //IsActive = model.IsActive,
-                //IsStarred = model.IsStarred,
-                Name = model.Name
-                //Price = model.Price,
-                //ProductImages = model.ProductImages
+                Name = model.Name,
+                LogoId = model.LogoId,
             };
         }
 
-        //public ProductViewModel ToProductViewModel(Product product)
-        //{
-        //    return new ProductViewModel
-        //    {
-        //        Categories = _combosHelper.GetComboCategories(),
-        //        Category = product.Category,
-        //        CategoryId = product.Category.Id,
-        //        Description = product.Description,
-        //        Id = product.Id,
-        //        IsActive = product.IsActive,
-        //        IsStarred = product.IsStarred,
-        //        Name = product.Name,
-        //        Price = product.Price,
-        //        ProductImages = product.ProductImages
-        //    };
-        //}
+        public TeamEntity ToTeamEntity(TeamViewModel model, Guid id, bool isNew)
+        {
+            return new TeamEntity
+            {
+                Id = isNew ? 0 : model.Id,
+                LogoId = id,
+                Name = model.Name
+            };
+        }
+
+        public TeamViewModel ToTeamViewModel(TeamEntity team)
+        {
+            return new TeamViewModel
+            {
+                Id = team.Id,
+                Name = team.Name,
+                LogoId = team.LogoId
+            };
+        }
 
     }
 
