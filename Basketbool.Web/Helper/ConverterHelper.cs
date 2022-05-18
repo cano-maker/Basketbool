@@ -70,6 +70,19 @@ namespace Basketbool.Web.Helpers
             };
         }
 
+
+        public async Task<MatchDayEntity> ToMatchDayEntityAsync(MatchDayViewModel model, bool isNew)
+        {
+            return new MatchDayEntity
+            {
+                MatchDayDetails = model.MatchDayDetails,
+                Id = isNew ? 0 : model.Id,
+                Matches = model.Matches,
+                Name = model.Name,
+                Season = await _context.Seasons.FindAsync(model.SeasonId)
+            };
+        }
+
     }
 
 }

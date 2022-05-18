@@ -17,6 +17,8 @@ namespace Basketbool.Web.Interfaces
 
         TeamEntity ToTeamEntity(TeamViewModel model, Guid id, bool isNew);
 
+        Task<MatchDayEntity> ToMatchDayEntityAsync(MatchDayViewModel model, bool isNew);
+
     }
 
 }

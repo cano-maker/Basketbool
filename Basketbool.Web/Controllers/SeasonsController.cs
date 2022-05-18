@@ -1,5 +1,7 @@
 ﻿using Basketbool.Web.Data;
 using Basketbool.Web.Data.Entities;
+using Basketbool.Web.Interfaces;
+using Basketbool.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -10,10 +12,12 @@ namespace Basketbool.Web.Controllers
     public class SeasonsController : Controller
     {
         private readonly DataContext _context;
+        private readonly IConverterHelper _converterHelper;
 
-        public SeasonsController(DataContext context)
+        public SeasonsController(DataContext context, IConverterHelper converterHelper)
         {
             _context = context;
+            _converterHelper = converterHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -116,6 +120,43 @@ namespace Basketbool.Web.Controllers
             }
 
             return View(seasonEntity);
+        }
+
+        public async Task<IActionResult> AddMatchDay(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            SeasonEntity seasonEntity = await _context.Seasons.FindAsync(id);
+            if (seasonEntity == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayViewModel model = new MatchDayViewModel
+            {
+                Season = seasonEntity,
+                SeasonId = seasonEntity.Id
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMatchDay(MatchDayViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                MatchDayEntity matchDayEntity = await _converterHelper.ToMatchDayEntityAsync(model, true);
+                _context.Add(matchDayEntity);
+                await _context.SaveChangesAsync();
+                return RedirectToAction($"{nameof(Details)}", new { id = model.SeasonId });
+            }
+
+            return View(model);
         }
 
     }
