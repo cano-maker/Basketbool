@@ -44,5 +44,35 @@ namespace Basketbool.Web.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            SeasonEntity seasonEntity = await _context.Seasons.FindAsync(id);
+            if (seasonEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View(seasonEntity);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(SeasonEntity model)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Update(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
+        }
+
     }
 }
