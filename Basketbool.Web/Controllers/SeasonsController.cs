@@ -213,5 +213,29 @@ namespace Basketbool.Web.Controllers
             return RedirectToAction($"{nameof(Details)}", new { id = matchDayEntity.Season.Id });
         }
 
+        public async Task<IActionResult> DetailsMatchDay(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayEntity matchDayEntity = await _context.MatchDays
+                .Include(g => g.Matches)
+                .ThenInclude(g => g.Local)
+                .Include(g => g.Matches)
+                .ThenInclude(g => g.Visitor)
+                .Include(g => g.Season)
+                .Include(g => g.MatchDayDetails)
+                .ThenInclude(gd => gd.Team)
+                .FirstOrDefaultAsync(g => g.Id == id);
+            if (matchDayEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View(matchDayEntity);
+        }
+
     }
 }
