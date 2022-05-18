@@ -83,6 +83,18 @@ namespace Basketbool.Web.Helpers
             };
         }
 
+        public MatchDayViewModel ToMatchDayViewModel(MatchDayEntity entity)
+        {
+            return new MatchDayViewModel
+            {
+                MatchDayDetails = entity.MatchDayDetails,
+                Id = entity.Id,
+                Matches = entity.Matches,
+                Name = entity.Name,
+                Season = entity.Season,
+                SeasonId = entity.Season.Id
+            };
+        }
     }
 
 }

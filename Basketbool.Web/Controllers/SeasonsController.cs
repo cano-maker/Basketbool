@@ -159,5 +159,59 @@ namespace Basketbool.Web.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> EditMatchDay(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayEntity matchDayEntity = await _context.MatchDays
+                .Include(g => g.Season)
+                .FirstOrDefaultAsync(g => g.Id == id);
+            if (matchDayEntity == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayViewModel model = _converterHelper.ToMatchDayViewModel(matchDayEntity);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditMatchDay(MatchDayViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                MatchDayEntity matchDayEntity = await _converterHelper.ToMatchDayEntityAsync(model, false);
+                _context.Update(matchDayEntity);
+                await _context.SaveChangesAsync();
+                return RedirectToAction($"{nameof(Details)}", new { id = model.SeasonId });
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteMatchDay(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayEntity matchDayEntity = await _context.MatchDays
+                .Include(g => g.Season)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (matchDayEntity == null)
+            {
+                return NotFound();
+            }
+
+            _context.MatchDays.Remove(matchDayEntity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction($"{nameof(Details)}", new { id = matchDayEntity.Season.Id });
+        }
+
     }
 }

@@ -19,6 +19,8 @@ namespace Basketbool.Web.Interfaces
 
         Task<MatchDayEntity> ToMatchDayEntityAsync(MatchDayViewModel model, bool isNew);
 
+        MatchDayViewModel ToMatchDayViewModel(MatchDayEntity entity);
+
     }
 
 }
