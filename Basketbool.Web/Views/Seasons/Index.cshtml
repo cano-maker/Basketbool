@@ -12,7 +12,7 @@
 <br />
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus"></i> Add New</a>
 </p>
 <div class="row">
     <div class="col-md-12">
@@ -62,9 +62,9 @@
                                     @Html.DisplayFor(modelItem => item.MatchDays.Count)
                                 </td>
                                 <td>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit<i class="glyphicon glyphicon-pencil"></i></a> |
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details <i class="glyphicon glyphicon-align-justify"></i></a> |
-                                    <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-align-justify"></i></a>
+                                    <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                         }
@@ -78,23 +78,18 @@
 <partial name="_DeleteDialog" />
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="/js/deleteDialog.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#MyTable').DataTable();
 
             // Delete item
-            var item_to_delete;
-
-            $('.deleteItem').click((e) => {
-                item_to_delete = e.currentTarget.dataset.id;
-            });
-
-            $("#btnYesDelete").click(function () {
-                window.location.href = '/Seasons/Delete/' + item_to_delete;
-            });
+            sc_deleteDialog.openModal('deleteItem', true, 'btnYesDelete', '/Seasons/Delete/', false);
         });
     </script>
 }

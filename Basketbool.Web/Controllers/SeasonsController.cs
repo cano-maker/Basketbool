@@ -74,5 +74,24 @@ namespace Basketbool.Web.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            SeasonEntity tournamentEntity = await _context.Seasons
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (tournamentEntity == null)
+            {
+                return NotFound();
+            }
+
+            _context.Seasons.Remove(tournamentEntity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
