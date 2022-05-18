@@ -81,16 +81,41 @@ namespace Basketbool.Web.Controllers
                 return NotFound();
             }
 
-            SeasonEntity tournamentEntity = await _context.Seasons
+            SeasonEntity seasonEntity = await _context.Seasons
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (tournamentEntity == null)
+            if (seasonEntity == null)
             {
                 return NotFound();
             }
 
-            _context.Seasons.Remove(tournamentEntity);
+            _context.Seasons.Remove(seasonEntity);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            SeasonEntity seasonEntity = await _context.Seasons
+                .Include(t => t.MatchDays)
+                .ThenInclude(t => t.Matches)
+                .ThenInclude(t => t.Local)
+                .Include(t => t.MatchDays)
+                .ThenInclude(t => t.Matches)
+                .ThenInclude(t => t.Visitor)
+                .Include(t => t.MatchDays)
+                .ThenInclude(t => t.MatchDayDetails)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (seasonEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View(seasonEntity);
         }
 
     }
