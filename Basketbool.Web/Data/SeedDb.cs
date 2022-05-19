@@ -1,5 +1,7 @@
 ﻿
 using Basketbool.Web.Data.Entities;
+using Basketbool.Web.Enums;
+using Basketbool.Web.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +12,12 @@ namespace Basketbool.Web.Data
     public class SeedDb
     {
         private readonly DataContext _context;
+        private readonly IUserHelper _userHelper;
 
-        public SeedDb(DataContext context)
+        public SeedDb(DataContext context, IUserHelper userHelper)
         {
             _context = context;
+            _userHelper = userHelper;
         }
 
         public async Task SeedAsync()
@@ -21,6 +25,46 @@ namespace Basketbool.Web.Data
             await _context.Database.EnsureCreatedAsync();
             await CheckTeamsAsync();
             await CheckSeasonsAsync();
+            await CheckRolesAsync();
+            await CheckUserAsync("99999999", "Fabio", "Cano", "fabio@gmail.com", "3256548952", "cr 56 7895", UserType.Admin);
+        }
+
+        private async Task<UserEntity> CheckUserAsync(
+                                string document,
+                                string firstName,
+                                string lastName,
+                                string email,
+                                string phone,
+                                string address,
+                                UserType userType)
+        {
+            UserEntity user = await _userHelper.GetUserAsync(email);
+            if (user == null)
+            {
+                user = new UserEntity
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = phone,
+                    Address = address,
+                    Document = document,
+                    UserType = userType,
+                };
+                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+
+                string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
+
+            }
+            return user;
+        }
+        private async Task CheckRolesAsync()
+        {
+            await _userHelper.CheckRoleAsync(nameof(UserType.Admin));
+            await _userHelper.CheckRoleAsync(nameof(UserType.User));
         }
 
         private async Task CheckSeasonsAsync()

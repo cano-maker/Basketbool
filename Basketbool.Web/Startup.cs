@@ -5,12 +5,14 @@ using Basketbool.Web.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace Basketbool.Web
@@ -67,12 +69,12 @@ namespace Basketbool.Web
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
                         };
                     });
-            //services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IBlobHelper, BlobHelper>();
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddTransient<SeedDb>();
-            //services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<IUserHelper, UserHelper>();
             services.AddControllersWithViews();
         }
 
@@ -101,6 +103,13 @@ namespace Basketbool.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en-US"),
+                SupportedCultures = new[] { new CultureInfo("en-US") },
+                SupportedUICultures = new[] { new CultureInfo("en-US") }
             });
         }
     }

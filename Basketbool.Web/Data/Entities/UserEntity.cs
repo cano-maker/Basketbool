@@ -2,8 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System.Linq;
-using Basketbool.Web.Common.Enums;
 using System;
+using Basketbool.Web.Enums;
 
 namespace Basketbool.Web.Data.Entities
 {

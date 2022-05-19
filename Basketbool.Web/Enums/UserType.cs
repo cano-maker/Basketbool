@@ -1,8 +1,9 @@
-﻿namespace Basketbool.Web.Common.Enums
+﻿namespace Basketbool.Web.Enums
 {
     public enum UserType
     {
         Admin,
         User
     }
+
 }
