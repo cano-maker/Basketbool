@@ -4,7 +4,12 @@
     ViewData["Title"] = "Details";
 }
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+<link rel="stylesheet" href="~/lib/font-awesome/css/fontawesome.css" />
+<link rel="stylesheet" href="~/lib/Font-Awesome/css/regular.min.css">
+<link rel="stylesheet" href="~/lib/Font-Awesome/css/solid.min.css">
+<br />
 
 <h2>Details</h2>
 
@@ -15,25 +20,13 @@
         <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
-                    Season
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Season.Name)
-                </dd>
-                <dt>
-                    MatchDay
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Name)
-                </dd>
-                <dt>
-                    # Teams
+                    Number of Teams
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.MatchDayDetails.Count)
                 </dd>
                 <dt>
-                    # Matches
+                    Number of Matches
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Matches.Count)
@@ -43,9 +36,9 @@
     </div>
 </div>
 <div>
-    <a asp-action="EditMatchDay" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    <a asp-action="AddMatchDayDetail" asp-route-id="@Model.Id" class="btn btn-primary">Add MatchDay Detail</a>
-    <a asp-action="AddMatch" asp-route-id="@Model.Id" class="btn btn-default">Add Match</a>
+    <a asp-action="EditMatchDay" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+    <a asp-action="AddMatchDayDetail" asp-route-id="@Model.Id" class="btn btn-primary"> <i class="fas fa-plus"></i> Add MatchDay Detail</a>
+    <a asp-action="AddMatch" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fas fa-plus"></i> Add Match</a>
     <a asp-action="Details" asp-route-id="@Model.Season.Id" class="btn btn-success">Back to List</a>
 </div>
 <br />
@@ -136,8 +129,8 @@
                                         @Html.DisplayFor(modelItem => item.PointsDifference)
                                     </td>
                                     <td>
-                                        <a asp-action="EditMatchDayDetails" asp-route-id="@item.Id" class="btn btn-warning"><i class="glyphicon glyphicon-pencil"></i></a>
-                                        <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                        <a asp-action="EditMatchDayDetails" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        <button data-id="@item.Id" class="btn btn-danger deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="fas fa-trash"></i></button>
                                     </td>
                                 </tr>
                             }
@@ -213,9 +206,9 @@
                                         @Html.DisplayFor(modelItem => item.IsClosed)
                                     </td>
                                     <td>
-                                        <a asp-action="EditMatch" asp-route-id="@item.Id" class="btn btn-warning"><i class="glyphicon glyphicon-pencil"></i></a>
-                                        <a asp-action="CloseMatch" asp-route-id="@item.Id" class="btn btn-info"><i class="glyphicon glyphicon-check"></i></a>
-                                        <button data-id="@item.Id" class="btn btn-danger deleteItemMath" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                        <a asp-action="EditMatch" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        <a asp-action="CloseMatch" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-align-justify"></i></a>
+                                        <button data-id="@item.Id" class="btn btn-danger deleteItemMath" data-toggle="modal" data-target="#deleteDialog"><i class="fas fa-trash"></i></button>
                                     </td>
                                 </tr>
                             }

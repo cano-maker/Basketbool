@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="~/lib/Font-Awesome/css/solid.min.css">
 <br />
 
-<h2>Details</h2>
+<h2>Season Details</h2>
 
 <div>
     <h4>Season</h4>
@@ -19,12 +19,6 @@
     <div class="row">
         <div class="col-md-4">
             <dl class="dl-horizontal">
-                <dt>
-                    @Html.DisplayNameFor(model => model.Name)
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.Name)
-                </dd>
                 <dt>
                     @Html.DisplayNameFor(model => model.StartDateLocal)
                 </dt>
@@ -44,7 +38,7 @@
                     @Html.DisplayFor(model => model.IsActive)
                 </dd>
                 <dt>
-                    # MatchDays
+                    Number of MatchDays
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.MatchDays.Count)
@@ -70,13 +64,10 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.Name)
+                                Number of Teams
                             </th>
                             <th>
-                                # Teams
-                            </th>
-                            <th>
-                                # Matches
+                                Number of Matches
                             </th>
                             <th></th>
                         </tr>
@@ -85,9 +76,6 @@
                         @foreach (var item in Model.MatchDays.OrderBy(g => g.Name))
                         {
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.MatchDayDetails.Count)
                                 </td>
