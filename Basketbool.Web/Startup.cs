@@ -71,7 +71,7 @@ namespace Basketbool.Web
             services.AddScoped<IBlobHelper, BlobHelper>();
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
-            //services.AddTransient<SeedDb>();
+            services.AddTransient<SeedDb>();
             //services.AddScoped<IUserHelper, UserHelper>();
             services.AddControllersWithViews();
         }
