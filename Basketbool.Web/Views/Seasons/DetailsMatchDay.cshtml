@@ -43,8 +43,8 @@
     </div>
 </div>
 <div>
-    <a asp-action="EditGroup" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    <a asp-action="AddGroupDetail" asp-route-id="@Model.Id" class="btn btn-primary">Add Team</a>
+    <a asp-action="EditMatchDay" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="AddMatchDayDetail" asp-route-id="@Model.Id" class="btn btn-primary">Add MatchDay Detail</a>
     <a asp-action="AddMatch" asp-route-id="@Model.Id" class="btn btn-default">Add Match</a>
     <a asp-action="Details" asp-route-id="@Model.Season.Id" class="btn btn-success">Back to List</a>
 </div>
@@ -253,9 +253,9 @@
 
             $("#btnYesDelete").click(function () {
                 if (toDelete == 1) {
-                    window.location.href = '/Tournaments/DeleteGroupDetail/' + item_to_delete;
+                    window.location.href = '/Seasons/DeleteMatchDayDetail/' + item_to_delete;
                 } else {
-                    window.location.href = '/Tournaments/DeleteMatch/' + item_to_delete;
+                    window.location.href = '/Seasons/DeleteMatch/' + item_to_delete;
                 }
             });
         });

@@ -7,10 +7,6 @@ namespace Basketbool.Web.Interfaces
 {
     public interface IConverterHelper
     {
-        //Category ToCategory(CategoryViewModel model, Guid imageId, bool isNew);
-
-        //CategoryViewModel ToCategoryViewModel(Category category);
-
         Task<TeamEntity> ToTeamAsync(TeamViewModel model, bool isNew);
 
         TeamViewModel ToTeamViewModel(TeamEntity entity);
@@ -20,6 +16,14 @@ namespace Basketbool.Web.Interfaces
         Task<MatchDayEntity> ToMatchDayEntityAsync(MatchDayViewModel model, bool isNew);
 
         MatchDayViewModel ToMatchDayViewModel(MatchDayEntity entity);
+
+        Task<MatchDayDetailEntity>  ToMatchDayDetailEntityAsync(MatchDayDetailViewModel model, bool isNew);
+
+        Task<MatchEntity> ToMatchEntityAsync(MatchViewModel model, bool isNew);
+
+        MatchDayDetailViewModel ToMatchDayDetailViewModel(MatchDayDetailEntity entity);
+
+        MatchViewModel ToMatchViewModel(MatchEntity entity);
 
     }
 

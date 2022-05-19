@@ -69,7 +69,7 @@ namespace Basketbool.Web
                     });
             //services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IBlobHelper, BlobHelper>();
-            //services.AddScoped<ICombosHelper, CombosHelper>();
+            services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             //services.AddTransient<SeedDb>();
             //services.AddScoped<IUserHelper, UserHelper>();

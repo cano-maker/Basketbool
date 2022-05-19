@@ -4,6 +4,7 @@ using Basketbool.Web.Interfaces;
 using Basketbool.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,11 +14,15 @@ namespace Basketbool.Web.Controllers
     {
         private readonly DataContext _context;
         private readonly IConverterHelper _converterHelper;
+        private readonly ICombosHelper _combosHelper;
 
-        public SeasonsController(DataContext context, IConverterHelper converterHelper)
+        public SeasonsController(DataContext context, 
+            IConverterHelper converterHelper,
+            ICombosHelper combosHelper)
         {
             _context = context;
             _converterHelper = converterHelper;
+            _combosHelper = combosHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -235,6 +240,266 @@ namespace Basketbool.Web.Controllers
             }
 
             return View(matchDayEntity);
+        }
+
+        public async Task<IActionResult> AddMatchDayDetail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayEntity matchDay = await _context.MatchDays.FindAsync(id);
+            if (matchDay == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayDetailViewModel model = new MatchDayDetailViewModel
+            {
+                MatchDay = matchDay,
+                MatchDayId = matchDay.Id,
+                Teams = _combosHelper.GetComboTeams()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMatchDayDetail(MatchDayDetailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                MatchDayDetailEntity matchDayDetailEntity = await _converterHelper.ToMatchDayDetailEntityAsync(model, true);
+                _context.Add(matchDayDetailEntity);
+                await _context.SaveChangesAsync();
+                return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = model.MatchDayId });
+            }
+
+            model.MatchDay = await _context.MatchDays.FindAsync(model.MatchDayId);
+            model.Teams = _combosHelper.GetComboTeams();
+            return View(model);
+        }
+
+        public async Task<IActionResult> AddMatch(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayEntity matchDayEntity = await _context.MatchDays.FindAsync(id);
+            if (matchDayEntity == null)
+            {
+                return NotFound();
+            }
+
+            MatchViewModel model = new MatchViewModel
+            {
+                Date = DateTime.Today,
+                MatchDay = matchDayEntity,
+                MatchDayId = matchDayEntity.Id,
+                Teams = _combosHelper.GetComboTeams(matchDayEntity.Id)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMatch(MatchViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.LocalId != model.VisitorId)
+                {
+                    MatchEntity matchEntity = await _converterHelper.ToMatchEntityAsync(model, true);
+                    _context.Add(matchEntity);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = model.MatchDayId });
+                }
+
+                ModelState.AddModelError(string.Empty, "The local and visitor must be differents teams.");
+            }
+
+            model.MatchDay = await _context.MatchDays.FindAsync(model.MatchDayId);
+            model.Teams = _combosHelper.GetComboTeams(model.MatchDayId);
+            return View(model);
+        }
+        
+        public async Task<IActionResult> EditMatchDayDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayDetailEntity matchDayDetailEntity = await _context.MatchDayDetails
+                .Include(gd => gd.MatchDay)
+                .Include(gd => gd.Team)
+                .FirstOrDefaultAsync(gd => gd.Id == id);
+            if (matchDayDetailEntity == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayDetailViewModel model = _converterHelper.ToMatchDayDetailViewModel(matchDayDetailEntity);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditMatchDayDetails(MatchDayDetailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                MatchDayDetailEntity matchDayDetailEntity = await _converterHelper.ToMatchDayDetailEntityAsync(model, false);
+                _context.Update(matchDayDetailEntity);
+                await _context.SaveChangesAsync();
+                return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = model.MatchDayId });
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> EditMatch(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchEntity matchEntity = await _context.Matches
+                .Include(m => m.MatchDay)
+                .Include(m => m.Local)
+                .Include(m => m.Visitor)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (matchEntity == null)
+            {
+                return NotFound();
+            }
+
+            MatchViewModel model = _converterHelper.ToMatchViewModel(matchEntity);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditMatch(MatchViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                MatchEntity matchEntity = await _converterHelper.ToMatchEntityAsync(model, false);
+                _context.Update(matchEntity);
+                await _context.SaveChangesAsync();
+                return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = model.MatchDayId });
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteMatchDayDetail(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchDayDetailEntity matchDayDetailEntity = await _context.MatchDayDetails
+                .Include(gd => gd.MatchDay)
+                .FirstOrDefaultAsync(gd => gd.Id == id);
+            if (matchDayDetailEntity == null)
+            {
+                return NotFound();
+            }
+
+            _context.MatchDayDetails.Remove(matchDayDetailEntity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = matchDayDetailEntity.MatchDay.Id });
+        }
+
+        public async Task<IActionResult> DeleteMatch(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MatchEntity matchEntity = await _context.Matches
+                .Include(m => m.MatchDay)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (matchEntity == null)
+            {
+                return NotFound();
+            }
+
+            _context.Matches.Remove(matchEntity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = matchEntity.MatchDay.Id });
+        }
+
+
+        public async Task<IActionResult> CloseMatch(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var matchEntity = await _context.Matches
+                .Include(m => m.MatchDay)
+                .Include(m => m.Local)
+                .Include(m => m.Visitor)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (matchEntity == null)
+            {
+                return NotFound();
+            }
+
+            var model = new CloseMatchViewModel
+            {
+                MatchDay = matchEntity.MatchDay,
+                MatchDayId = matchEntity.MatchDay.Id,
+                Local = matchEntity.Local,
+                LocalId = matchEntity.Local.Id,
+                MatchId = matchEntity.Id,
+                Visitor = matchEntity.Visitor,
+                VisitorId = matchEntity.Visitor.Id
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloseMatch(CloseMatchViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                MatchEntity matchEntity = await _context.Matches
+                .Include(m => m.Local)
+                .Include(m => m.Visitor)
+                .Include(m => m.Predictions)
+                .Include(m => m.MatchDay)
+                .ThenInclude(g => g.MatchDayDetails)
+                .ThenInclude(gd => gd.Team)
+                .FirstOrDefaultAsync(m => m.Id == model.MatchId);
+
+                matchEntity.PointsLocal = model.PointsLocal;
+                matchEntity.PointsVisitor = model.PointsVisitor;
+                matchEntity.IsClosed = true;
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction($"{nameof(DetailsMatchDay)}", new { id = model.MatchDayId });
+
+            }
+
+            model.MatchDay = await _context.MatchDays.FindAsync(model.MatchDayId);
+            model.Local = await _context.Teams.FindAsync(model.LocalId);
+            model.Visitor = await _context.Teams.FindAsync(model.VisitorId);
+            return View(model);
         }
 
     }

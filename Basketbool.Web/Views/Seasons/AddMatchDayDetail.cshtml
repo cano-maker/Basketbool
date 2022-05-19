@@ -1,0 +1,29 @@
+﻿@model Basketbool.Web.Models.MatchDayDetailViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Add</h2>
+
+<h4>Team to MatchDay: @Model.MatchDay.Name</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddMatchDayDetail" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MatchDayId" />
+
+            <partial name="_MatchDayDetail" />
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="DetailsMatchDay" asp-route-id="@Model.MatchDayId" class="btn btn-success">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
