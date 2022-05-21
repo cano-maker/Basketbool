@@ -36,8 +36,8 @@ namespace Basketbool.Web.Models
 
         [Display(Name = "Image")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://TiendaOnlineweb.azurewebsites.net/images/noimage.png"
-            : $"https://TiendaOnline.blob.core.windows.net/users/{ImageId}";
+            ? $"https://basketboolweb.azurewebsites.net/images/noimage.png"
+            : $"https://basketbool.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }

@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Basketbool.Web.Common;
+﻿using Basketbool.Web.Common;
 using Basketbool.Web.Data;
 using Basketbool.Web.Data.Entities;
 using Basketbool.Web.Enums;
 using Basketbool.Web.Interfaces;
 using Basketbool.Web.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Basketbool.Web.Controllers
 {

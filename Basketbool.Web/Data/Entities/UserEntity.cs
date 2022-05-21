@@ -33,8 +33,8 @@ namespace Basketbool.Web.Data.Entities
         //TODO: Pending to put the correct paths
         [Display(Name = "Image")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:44390/images/noimage.png"
-            : $"https://Basketbool.blob.core.windows.net/users/{ImageId}";
+            ? $"https://basketboolweb.azurewebsites.net/images/noimage.png"
+            : $"https://basketbool.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "User Type")]
         public UserType UserType { get; set; }
